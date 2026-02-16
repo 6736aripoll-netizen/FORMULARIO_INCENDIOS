@@ -1,0 +1,486 @@
+<!doctype html>
+<html lang="ca">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Pressupost – Treballs forestals a Interfície Urbà-Forestal (IUF)</title>
+
+  <style>
+    :root{
+      --ink:#111;
+      --muted:#5b5b5b;
+      --line:#d9d9d9;
+      --bg:#fafafa;
+      --accent:#1f4d2a;
+      --pad:14px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--ink);
+      background:#fff;
+      line-height:1.25;
+    }
+    .page{
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 26px 22px 40px;
+    }
+    header{
+      display:flex;
+      gap:18px;
+      align-items:flex-start;
+      justify-content:space-between;
+      border-bottom:2px solid var(--ink);
+      padding-bottom:12px;
+      margin-bottom:14px;
+    }
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .logo{
+      width:54px;height:54px;border:2px solid var(--accent);
+      border-radius:10px; display:flex; align-items:center; justify-content:center;
+      color:var(--accent); font-weight:700;
+    }
+    .hgroup h1{
+      font-size:18px; margin:0 0 6px; letter-spacing:.2px;
+    }
+    .hgroup .small{
+      font-size:12px; color:var(--muted);
+    }
+    .meta{
+      text-align:right;
+      font-size:12px;
+      min-width:260px;
+    }
+    .meta b{display:inline-block; min-width:110px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      margin: 14px 0 18px;
+    }
+    .card{
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding: var(--pad);
+      background: var(--bg);
+    }
+    .card h2{
+      font-size:13px;
+      margin:0 0 10px;
+      color:#000;
+      letter-spacing:.15px;
+    }
+    .field{
+      display:flex;
+      gap:10px;
+      margin: 6px 0;
+      font-size:12px;
+      align-items:flex-start;
+    }
+    .field .k{min-width:130px; color:var(--muted)}
+    .field .v{flex:1}
+    .note{
+      font-size:11px;color:var(--muted);
+      margin-top:10px;
+    }
+
+    table{
+      width:100%;
+      border-collapse:collapse;
+      margin: 10px 0 18px;
+      font-size:12px;
+    }
+    th, td{
+      border:1px solid var(--line);
+      padding:8px 8px;
+      vertical-align:top;
+    }
+    th{
+      background:#f1f1f1;
+      text-align:left;
+      font-weight:650;
+    }
+    .right{text-align:right}
+    .center{text-align:center}
+    .nowrap{white-space:nowrap}
+    .muted{color:var(--muted)}
+    .pill{
+      display:inline-block;
+      padding:2px 8px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      font-size:11px;
+      background:#fff;
+    }
+
+    .totals{
+      width: 420px;
+      margin-left:auto;
+      border:1px solid var(--line);
+      border-radius:10px;
+      overflow:hidden;
+    }
+    .totals .row{
+      display:flex;
+      justify-content:space-between;
+      padding:10px 12px;
+      border-top:1px solid var(--line);
+      font-size:12px;
+      background:#fff;
+    }
+    .totals .row:first-child{border-top:0}
+    .totals .row.total{
+      font-weight:800;
+      background:#f6fff2;
+      border-top:2px solid var(--ink);
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      justify-content:flex-end;
+      margin: 10px 0 18px;
+    }
+    button{
+      border:1px solid var(--line);
+      background:#fff;
+      padding:8px 10px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:12px;
+    }
+    button.primary{
+      border-color: var(--accent);
+      color:#fff;
+      background: var(--accent);
+    }
+
+    footer{
+      border-top:1px solid var(--line);
+      padding-top:10px;
+      margin-top:14px;
+      font-size:11px;
+      color:var(--muted);
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    /* PRINT (Guardar com a PDF) */
+    @media print{
+      body{background:#fff}
+      .page{max-width:none; padding:14mm 12mm}
+      .actions{display:none !important}
+      a[href]:after{content:""}
+      .card{background:#fff}
+      th{background:#eee !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
+      .totals .row.total{background:#eaffdd !important; -webkit-print-color-adjust: exact; print-color-adjust: exact;}
+      .pagebreak{break-before:page}
+    }
+
+    /* Inputs sense “look” agressiu */
+    input[type="text"], input[type="number"], input[type="date"], textarea, select{
+      width:100%;
+      font: inherit;
+      font-size:12px;
+      padding:6px 8px;
+      border:1px solid var(--line);
+      border-radius:8px;
+      background:#fff;
+    }
+    textarea{min-height:70px; resize:vertical}
+  </style>
+</head>
+
+<body>
+  <div class="page">
+    <header>
+      <div class="brand">
+        <div class="logo">IUF</div>
+        <div class="hgroup">
+          <h1>PRESSUPOST – Treballs forestals a Interfície Urbà-Forestal (IUF)</h1>
+          <div class="small">
+            Empresa: <b><span contenteditable="true">[Nom de l’empresa]</span></b> · CIF/NIF: <span contenteditable="true">[___]</span><br/>
+            Adreça: <span contenteditable="true">[Carrer, núm., municipi]</span> · Tel: <span contenteditable="true">[___]</span> · Email: <span contenteditable="true">[___]</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="meta">
+        <div><b>Núm. pressupost:</b> <span contenteditable="true">PF-2026-___</span></div>
+        <div><b>Data:</b> <input id="dataPressupost" type="date" /></div>
+        <div><b>Vigència:</b> <span contenteditable="true">30 dies</span></div>
+        <div><b>Referència obra:</b> <span contenteditable="true">[IUF - Sector ___]</span></div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Dades del client</h2>
+        <div class="field"><div class="k">Client / Entitat</div><div class="v" contenteditable="true">[Nom]</div></div>
+        <div class="field"><div class="k">NIF/CIF</div><div class="v" contenteditable="true">[___]</div></div>
+        <div class="field"><div class="k">Adreça</div><div class="v" contenteditable="true">[___]</div></div>
+        <div class="field"><div class="k">Contacte</div><div class="v" contenteditable="true">[Nom i càrrec]</div></div>
+        <div class="field"><div class="k">Tel / Email</div><div class="v" contenteditable="true">[___]</div></div>
+      </div>
+
+      <div class="card">
+        <h2>Emplaçament i condicions</h2>
+        <div class="field"><div class="k">Ubicació (polígon/parcel·la)</div><div class="v" contenteditable="true">[___]</div></div>
+        <div class="field"><div class="k">Municipi / Província</div><div class="v" contenteditable="true">[___]</div></div>
+        <div class="field"><div class="k">Accessos</div><div class="v" contenteditable="true">[Camí forestal / vial urbà / etc.]</div></div>
+        <div class="field"><div class="k">Pendent / vegetació</div><div class="v" contenteditable="true">[pendent %, densitat, alçada matollar]</div></div>
+        <div class="note">
+          Aquest model inclou preus orientatius basats en una taula de preus unitaris màxims. Poden variar segons accessibilitat, pendent, densitat de vegetació i condicions reals d’execució.
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Objecte dels treballs</h2>
+      <textarea placeholder="Descriu l’abast: neteges preventives, reducció de càrrega de combustible, franges perimetrals, tallafocs, poda, retirada i gestió de restes, etc."></textarea>
+      <div class="note">
+        Recomanació: indicar si hi ha restriccions (nidificació, línies elèctriques, proximitat d’edificacions, horaris municipals, permisos de crema, etc.).
+      </div>
+    </div>
+
+    <div class="actions">
+      <button onclick="afegirFila()">+ Afegir línia</button>
+      <button onclick="recalcular()" class="primary">Recalcular totals</button>
+      <button onclick="window.print()">Imprimir / Descarregar PDF</button>
+    </div>
+
+    <h2 style="font-size:13px;margin:8px 0 6px;">Partides i preus unitaris</h2>
+    <div class="muted" style="font-size:11px;margin-bottom:6px;">
+      Tria una actuació de la llista (Taula 7) i introdueix quantitat. El preu unitari s’autocompletarà (editable).
+    </div>
+
+    <table id="taulaPartides">
+      <thead>
+        <tr>
+          <th style="width:34%;">Actuació</th>
+          <th style="width:8%;">Unitat</th>
+          <th style="width:10%;" class="right">Quantitat</th>
+          <th style="width:12%;" class="right">Preu unitari (€)</th>
+          <th style="width:12%;" class="right">Import (€)</th>
+          <th style="width:24%;">Observacions / factors</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="fila">
+          <td>
+            <select class="actuacio" onchange="omplirPreu(this)">
+              <option value="" data-unit="" data-price="" data-factors="">— Selecciona —</option>
+
+              <option data-unit="area" data-price="12.44" data-factors="—">Arrencada mecànica d'arbustos “a fet”</option>
+              <option data-unit="area" data-price="9.87" data-factors="Percentatge de superfície tractada">Arrencada mecànica d'arbustos en faixes (50 %)</option>
+              <option data-unit="unitat" data-price="59.61" data-factors="Dimensions de l’arbre i sistema d’execució">Arrencada manual d’arbre de mida mitjana</option>
+              <option data-unit="Ha" data-price="150.46" data-factors="Diàmetre mitjà dels peus">Eliminació d’arbreda amb diàmetre inferior a 10 cm</option>
+
+              <option data-unit="Ha" data-price="244.50" data-factors="Densitat del matollar (baixa)">Eliminació d'arbustos (baixa densitat)</option>
+              <option data-unit="Ha" data-price="282.11" data-factors="Densitat del matollar (alta)">Eliminació d'arbustos (alta densitat)</option>
+
+              <option data-unit="Ha" data-price="606.86" data-factors="Cobertura, alçada del matollar i pendent">Desbrossament manual no selectiu</option>
+              <option data-unit="Ha" data-price="821.39" data-factors="Cobertura i pendent">Desbrossament manual selectiu</option>
+
+              <option data-unit="area" data-price="33.32" data-factors="Pendent del terreny i sistema d’execució">Desbrossament manual d'arbustos “a fet”</option>
+              <option data-unit="area" data-price="8.88" data-factors="Percentatge de superfície tractada i pendent">Desbrossament manual en faixes (≤ 25 % de la superfície)</option>
+
+              <option data-unit="Ha" data-price="301.29" data-factors="Densitat inicial (peus/ha) i % d’aclarida">Aclarida en masses de coníferes (opció A)</option>
+              <option data-unit="Ha" data-price="71.89" data-factors="Densitat, pendent i % d’extracció">Aclarida en masses de coníferes (opció B)</option>
+              <option data-unit="Ha" data-price="59.05" data-factors="Densitat, pendent i % d’extracció">Aclarida en masses de coníferes (opció C)</option>
+
+              <option data-unit="m²" data-price="0.31" data-factors="Tipologia del terreny, pendent i presència de soques">Obertura manual de tallafocs</option>
+
+              <option data-unit="Ha" data-price="326.49" data-factors="Alçada i densitat del matollar (&lt; 1 m)">Neteja de tallafocs existent (matollar &lt; 1 m)</option>
+              <option data-unit="Ha" data-price="466.41" data-factors="Alçada i densitat del matollar (&gt; 1 m)">Neteja de tallafocs existent (matollar &gt; 1 m)</option>
+
+              <option data-unit="Ha" data-price="366.40" data-factors="Densitat, alçada dels arbres i pendent">Poda manual en masses de pi</option>
+            </select>
+          </td>
+          <td class="unitat center muted">—</td>
+          <td><input class="qty right" type="number" step="0.01" min="0" value="0" oninput="recalcular()" /></td>
+          <td><input class="preu right" type="number" step="0.01" min="0" value="0" oninput="recalcular()" /></td>
+          <td class="import right nowrap">0,00</td>
+          <td class="factors muted">—</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="totals" aria-label="Totals">
+      <div class="row"><div>Subtotal</div><div class="nowrap"><span id="subtotal">0,00</span> €</div></div>
+      <div class="row">
+        <div>IVA (%)</div>
+        <div class="nowrap" style="display:flex; gap:10px; align-items:center;">
+          <input id="ivaPct" type="number" step="0.01" min="0" value="21" style="width:90px; text-align:right;" oninput="recalcular()" />
+          <span><span id="ivaImp">0,00</span> €</span>
+        </div>
+      </div>
+      <div class="row total"><div>TOTAL</div><div class="nowrap"><span id="total">0,00</span> €</div></div>
+    </div>
+
+    <div class="card" style="margin-top:16px;">
+      <h2>Terminis, mitjans i condicions</h2>
+      <div class="field"><div class="k">Termini d’execució</div><div class="v" contenteditable="true">[ex.: 5 dies laborables des de l’acta d’inici]</div></div>
+      <div class="field"><div class="k">Equips i mitjans</div><div class="v" contenteditable="true">[brigada, maquinària, EPI, senyalització, etc.]</div></div>
+      <div class="field"><div class="k">Gestió de restes</div><div class="v" contenteditable="true">[trituració, retirada, apilament, crema autoritzada, etc.]</div></div>
+      <div class="field"><div class="k">Formes de pagament</div><div class="v" contenteditable="true">[ex.: 50% inici / 50% final; o certificacions]</div></div>
+      <div class="field"><div class="k">Observacions</div><div class="v" contenteditable="true">[permisos, afectacions, restriccions horàries, seguretat]</div></div>
+      <div class="note">
+        Nota: els preus són orientatius i poden variar segons les condicions reals d’execució (accessibilitat, pendent, densitat de vegetació i altres factors tècnics justificats per direcció dels treballs).
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Acceptació</h2>
+      <div class="field"><div class="k">Nom i càrrec</div><div class="v" contenteditable="true">[___]</div></div>
+      <div class="field"><div class="k">Data i signatura</div><div class="v" contenteditable="true">[___]</div></div>
+      <div class="field"><div class="k">Segell (opcional)</div><div class="v muted">—</div></div>
+    </div>
+
+    <div class="pagebreak"></div>
+
+    <h2 style="font-size:13px;margin:8px 0 6px;">Annex – Jornals de treballs forestals (Taula 6, referència de rendiments)</h2>
+    <div class="muted" style="font-size:11px;margin-bottom:8px;">
+      Nota: els jornals es calculen per a una brigada de 5 membres, a raó de 8 hores/jornal.
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Concepte d'actuació</th>
+          <th style="width:10%;">Unitat</th>
+          <th style="width:18%;">Manual (jornals)</th>
+          <th style="width:18%;">Mecanitzada (hores)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Construcció de depòsit d’aigua de 60 m³</td><td class="center">ud.</td><td class="center">5</td><td class="center">10,80</td></tr>
+        <tr><td>Construcció de depòsit d’aigua de 120 m³</td><td class="center">ud.</td><td class="center">8</td><td class="center">—</td></tr>
+        <tr><td>Desbrossament d’1 ha (pendent &lt;30%, alçada matoll &lt;1 m)</td><td class="center">ha</td><td class="center">11</td><td class="center">—</td></tr>
+        <tr><td>Poda baixa d’1 ha (2 m)</td><td class="center">ha</td><td class="center">1,90</td><td class="center">8</td></tr>
+        <tr><td>Poda alta d’1 ha (5 m)</td><td class="center">ha</td><td class="center">0,8</td><td class="center">—</td></tr>
+        <tr><td>Recollida i apilament de restes forestals (1 ha)</td><td class="center">ha</td><td class="center">1,6</td><td class="center">—</td></tr>
+        <tr><td>Eliminació d’1 ha de restes forestals amb desbrossadora</td><td class="center">ha</td><td class="center">1,5</td><td class="center">—</td></tr>
+        <tr><td>1 ha de desbrossament, clareig i poda</td><td class="center">ha</td><td class="center">—</td><td class="center">10,20</td></tr>
+        <tr><td>Crema d’1 ha de residus forestals apilats</td><td class="center">ha</td><td class="center">1</td><td class="center">—</td></tr>
+      </tbody>
+    </table>
+
+    <h2 style="font-size:13px;margin:8px 0 6px;">Annex – Preus unitaris orientatius (Taula 7)</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Actuació</th>
+          <th style="width:10%;">Unitat</th>
+          <th style="width:14%;" class="right">Preu unitari (€)</th>
+          <th>Factors condicionants del preu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Arrencada mecànica d'arbustos “a fet”</td><td class="center">area</td><td class="right">12,44</td><td>—</td></tr>
+        <tr><td>Arrencada mecànica d'arbustos en faixes (50 %)</td><td class="center">area</td><td class="right">9,87</td><td>Percentatge de superfície tractada</td></tr>
+        <tr><td>Arrencada manual d’arbre de mida mitjana</td><td class="center">unitat</td><td class="right">59,61</td><td>Dimensions de l’arbre i sistema d’execució</td></tr>
+        <tr><td>Eliminació d’arbreda amb diàmetre inferior a 10 cm</td><td class="center">Ha</td><td class="right">150,46</td><td>Diàmetre mitjà dels peus</td></tr>
+        <tr><td>Eliminació d'arbustos (baixa densitat)</td><td class="center">Ha</td><td class="right">244,50</td><td>Densitat del matollar</td></tr>
+        <tr><td>Eliminació d'arbustos (alta densitat)</td><td class="center">Ha</td><td class="right">282,11</td><td>Densitat del matollar</td></tr>
+        <tr><td>Desbrossament manual no selectiu</td><td class="center">Ha</td><td class="right">606,86</td><td>Cobertura, alçada del matollar i pendent</td></tr>
+        <tr><td>Desbrossament manual selectiu</td><td class="center">Ha</td><td class="right">821,39</td><td>Cobertura i pendent</td></tr>
+        <tr><td>Desbrossament manual d'arbustos “a fet”</td><td class="center">area</td><td class="right">33,32</td><td>Pendent del terreny i sistema d’execució</td></tr>
+        <tr><td>Desbrossament manual en faixes (≤ 25 % de la superfície)</td><td class="center">area</td><td class="right">8,88</td><td>Percentatge de superfície tractada i pendent</td></tr>
+        <tr><td>Aclarida en masses de coníferes (opció A)</td><td class="center">Ha</td><td class="right">301,29</td><td>Densitat inicial (peus/ha) i percentatge d’aclarida</td></tr>
+        <tr><td>Aclarida en masses de coníferes (opció B)</td><td class="center">Ha</td><td class="right">71,89</td><td>Densitat, pendent i percentatge d’extracció</td></tr>
+        <tr><td>Aclarida en masses de coníferes (opció C)</td><td class="center">Ha</td><td class="right">59,05</td><td>Densitat, pendent i percentatge d’extracció</td></tr>
+        <tr><td>Obertura manual de tallafocs</td><td class="center">m²</td><td class="right">0,31</td><td>Tipologia del terreny, pendent i presència de soques</td></tr>
+        <tr><td>Neteja de tallafocs existent (matollar &lt; 1 m)</td><td class="center">Ha</td><td class="right">326,49</td><td>Alçada i densitat del matollar</td></tr>
+        <tr><td>Neteja de tallafocs existent (matollar &gt; 1 m)</td><td class="center">Ha</td><td class="right">466,41</td><td>Alçada i densitat del matollar</td></tr>
+        <tr><td>Poda manual en masses de pi</td><td class="center">Ha</td><td class="right">366,40</td><td>Densitat, alçada dels arbres i pendent</td></tr>
+      </tbody>
+    </table>
+
+    <footer>
+      <div>Document orientatiu per pressupostar actuacions a IUF. Adaptar a plec, projecte i condicionants de camp.</div>
+      <div class="nowrap">Pàgina <span class="pill">1</span> / <span class="pill">2</span></div>
+    </footer>
+  </div>
+
+  <script>
+    // Inicialitza data a avui (Europe/Madrid dependrà del navegador)
+    (function initDate(){
+      const el = document.getElementById('dataPressupost');
+      if(!el.value){
+        const d = new Date();
+        const iso = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+        el.value = iso;
+      }
+      recalcular();
+    })();
+
+    function fmtEUR(n){
+      // Format amb coma decimal
+      const v = (isFinite(n) ? n : 0);
+      return v.toLocaleString('ca-ES', {minimumFractionDigits:2, maximumFractionDigits:2});
+    }
+
+    function omplirPreu(sel){
+      const opt = sel.options[sel.selectedIndex];
+      const tr = sel.closest('tr');
+
+      const unit = opt.getAttribute('data-unit') || '';
+      const price = parseFloat(opt.getAttribute('data-price') || '0');
+      const factors = opt.getAttribute('data-factors') || '—';
+
+      tr.querySelector('.unitat').textContent = unit || '—';
+      tr.querySelector('.preu').value = isFinite(price) ? price.toFixed(2) : '0.00';
+      tr.querySelector('.factors').innerHTML = factors;
+
+      recalcular();
+    }
+
+    function recalcular(){
+      const rows = document.querySelectorAll('#taulaPartides tbody tr.fila');
+      let subtotal = 0;
+
+      rows.forEach(tr=>{
+        const qty = parseFloat(tr.querySelector('.qty').value || '0');
+        const price = parseFloat(tr.querySelector('.preu').value || '0');
+        const imp = (isFinite(qty) ? qty : 0) * (isFinite(price) ? price : 0);
+        subtotal += imp;
+        tr.querySelector('.import').textContent = fmtEUR(imp);
+      });
+
+      const ivaPct = parseFloat(document.getElementById('ivaPct').value || '0');
+      const iva = subtotal * ((isFinite(ivaPct) ? ivaPct : 0) / 100);
+      const total = subtotal + iva;
+
+      document.getElementById('subtotal').textContent = fmtEUR(subtotal);
+      document.getElementById('ivaImp').textContent = fmtEUR(iva);
+      document.getElementById('total').textContent = fmtEUR(total);
+    }
+
+    function afegirFila(){
+      const tbody = document.querySelector('#taulaPartides tbody');
+      const first = tbody.querySelector('tr.fila');
+      const clone = first.cloneNode(true);
+
+      // Reset
+      clone.querySelector('select.actuacio').selectedIndex = 0;
+      clone.querySelector('.unitat').textContent = '—';
+      clone.querySelector('.qty').value = '0';
+      clone.querySelector('.preu').value = '0';
+      clone.querySelector('.import').textContent = '0,00';
+      clone.querySelector('.factors').textContent = '—';
+
+      tbody.appendChild(clone);
+      recalcular();
+    }
+  </script>
+</body>
+</html>
